@@ -1,0 +1,6 @@
+requirements.in
+venv/
+yfinance.txt
+dcf.py
+assets.py
+.idea/
