@@ -44,45 +44,45 @@ def index():
             try:
                 stock = yf.Ticker(stock_ticker)
 
-                try:
-                    balance_sheet = stock.get_balance_sheet()
-                    total_assets = balance_sheet.loc['TotalAssets', :]
-                    latest_total_assets = round(total_assets.iloc[0])
+                balance_sheet = stock.get_balance_sheet()
 
-                    stock_info['totalAssets'] = f"{latest_total_assets:,}"
-                except KeyError:
-                    print(f"Total assets data not available for {stock_ticker}.")
-                    stock_info['totalAssets'] = 0
+                total_assets = balance_sheet.loc['TotalAssets', :]
+                latest_total_assets = round(total_assets.iloc[0])
+                stock_info['totalAssets'] = latest_total_assets
 
-                stock_info['longName'] = stock.info.get('longName', 'N/A')
-                stock_info['website'] = stock.info.get('website', 'N/A')
+                total_liabilities_short = balance_sheet.loc['TotalLiabilitiesNetMinorityInterest', :]
+                total_liabilities_long = balance_sheet.loc['TotalNonCurrentLiabilitiesNetMinorityInterest', :]
+                stock_info['totalLiabilities'] = round(total_liabilities_short.iloc[0] + total_liabilities_long.iloc[0])
+
+                stock_info['longName'] = stock.info.get('longName', '0')
+                stock_info['website'] = stock.info.get('website', '0')
 
                 # Price
-                stock_info['currentPrice'] = stock.info.get('currentPrice', 'N/A')
-                stock_info['regularMarketDayLow'] = stock.info.get('regularMarketDayLow', 'N/A')
-                stock_info['regularMarketDayHigh'] = stock.info.get('regularMarketDayHigh', 'N/A')
-                stock_info['regularMarketPreviousClose'] = stock.info.get('regularMarketPreviousClose', 'N/A')
+                stock_info['currentPrice'] = stock.info.get('currentPrice', '0')
+                stock_info['regularMarketDayLow'] = stock.info.get('regularMarketDayLow', '0')
+                stock_info['regularMarketDayHigh'] = stock.info.get('regularMarketDayHigh', '0')
+                stock_info['regularMarketPreviousClose'] = stock.info.get('regularMarketPreviousClose', '0')
 
                 # Financial
                 stock_info['sharesOutstanding'] = stock.info.get('sharesOutstanding', 0)
-                stock_info['trailingPE'] = stock.info.get('trailingPE', 'N/A')
-                stock_info['forwardPE'] = stock.info.get('forwardPE', 'N/A')
-                stock_info['priceToSalesTrailing12Months'] = stock.info.get('priceToSalesTrailing12Months', 'N/A')
-                stock_info['bookValue'] = stock.info.get('bookValue', 'N/A')
-                stock_info['priceToBook'] = stock.info.get('priceToBook', 'N/A')
-                stock_info['earningsQuarterlyGrowth'] = stock.info.get('earningsQuarterlyGrowth', 'N/A')
-                stock_info['trailingEps'] = stock.info.get('trailingEps', 'N/A')
-                stock_info['forwardEps'] = stock.info.get('forwardEps', 'N/A')
-                stock_info['pegRatio'] = stock.info.get('pegRatio', 'N/A')
-                stock_info['totalRevenue'] = f"{stock.info.get('totalRevenue', 'N/A'):,}"
-                stock_info['totalDebt'] = f"{stock.info.get('totalDebt', 'N/A'):,}"
-                stock_info['debtToEquity'] = stock.info.get('debtToEquity', 'N/A')
-                stock_info['revenuePerShare'] = stock.info.get('revenuePerShare', 'N/A')
+                stock_info['trailingPE'] = stock.info.get('trailingPE', '0')
+                stock_info['forwardPE'] = stock.info.get('forwardPE', '0')
+                stock_info['priceToSalesTrailing12Months'] = stock.info.get('priceToSalesTrailing12Months', '0')
+                stock_info['bookValue'] = stock.info.get('bookValue', '0')
+                stock_info['priceToBook'] = stock.info.get('priceToBook', '0')
+                stock_info['earningsQuarterlyGrowth'] = stock.info.get('earningsQuarterlyGrowth', '0')
+                stock_info['trailingEps'] = stock.info.get('trailingEps', '0')
+                stock_info['forwardEps'] = stock.info.get('forwardEps', '0')
+                stock_info['pegRatio'] = stock.info.get('pegRatio', '0')
+                stock_info['totalRevenue'] = round(stock.info.get('totalRevenue', '0'))
+                stock_info['totalDebt'] = round(stock.info.get('totalDebt', '0'))
+                stock_info['debtToEquity'] = stock.info.get('debtToEquity', '0')
+                stock_info['revenuePerShare'] = stock.info.get('revenuePerShare', '0')
                 stock_info[
-                    'grossProfits'] = f"{stock.info.get('grossProfits', 'N/A'):,}" if 'grossProfits' in stock.info else 'N/A'
+                    'grossProfits'] = round(stock.info.get('grossProfits', 0)) if 'grossProfits' in stock.info else 0
                 stock_info[
-                    'freeCashflow'] = f"{stock.info.get('freeCashflow', 'N/A'):,}" if 'freeCashflow' in stock.info else 'N/A'
-                stock_info['operatingCashflow'] = f"{stock.info.get('operatingCashflow', 'N/A'):,}"
+                    'freeCashflow'] = round(stock.info.get('freeCashflow', 0)) if 'freeCashflow' in stock.info else 0
+                stock_info['operatingCashflow'] = round(stock.info.get('operatingCashflow', 0))
 
                 cashflow_data = stock.cashflow
                 free_cash_flow_data = cashflow_data.loc['Free Cash Flow'].tail(4)
